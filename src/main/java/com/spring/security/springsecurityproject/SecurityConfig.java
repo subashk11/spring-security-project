@@ -10,6 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -53,8 +55,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService getUserDetailsService(){
         // USERS SHOULD BE OF USER DETAILS
-        UserDetails user1 = User.withUsername("user1").password("{noop}user@123").roles("USER").build();
-        UserDetails admin1 = User.withUsername("admin1").password("{noop}admin@123").roles("ADMIN").build();
+        UserDetails user1 = User.withUsername("user1").password(passwordEncoder().encode("user@123")).roles("USER").build();
+        UserDetails admin1 = User.withUsername("admin1").password(passwordEncoder().encode("admin@123")).roles("ADMIN").build();
 
         // TO TEST - USERS CREATED IN MEMORY THIS CLASS IS USED.
 //        return new InMemoryUserDetailsManager(user1, admin1);
@@ -66,5 +68,11 @@ public class SecurityConfig {
         userDetailsManager.createUser(admin1);
 
         return userDetailsManager;
+    }
+
+    // CREATE A BEAN FROM PASSWORD ENCODER INTERFACE - USERING BCRYPT PASSWORD ENCODER
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
